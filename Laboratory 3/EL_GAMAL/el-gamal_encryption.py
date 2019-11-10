@@ -35,7 +35,6 @@ class El_Gamal:
     def second_part_encryption(self, public_key: int, letter_position_in_message: list):
         #b = (yˆk * T) mod p
         b_part_encruption = list()
-        print(f'Позиция символв в алфавите = {letter_position_in_message}')
 
         for i in range(len(self.message)):
             b_part_encruption.append(((int(public_key) ** self.k_number) * int(letter_position_in_message[i])) % p_number)

@@ -26,15 +26,10 @@ class RSA:
 
         return d
 
-    def encrypt(self, public_key) -> Tuple[List[str], Dict[int, chr]]:
-        alphabet_for_encryption, alphabet_for_decryption = RSA.letter_numerating()
+    def encrypt(self, public_key, alphabet_for_encrypt) -> Tuple[List[str], Dict[int, chr]]:
+        crypto_string = [alphabet_for_encrypt[ch] ** public_key[0] % public_key[1] for ch in self.message]
 
-        crypto_string = list()
-
-        for ch in self.message:
-            crypto_string.append(alphabet_for_encryption[ch] ** public_key[0] % public_key[1])
-
-        return crypto_string, alphabet_for_decryption
+        return crypto_string
 
     @staticmethod
     def decrypt(secret_key, alphabet, encrypte_message, n) -> str:
@@ -57,14 +52,16 @@ class RSA:
         euler_num = (self.p - 1) * (self.q - 1)
         public_key = [self.e, n]
 
-        encrypt_message, alphabet_for_decrypt = RSA.encrypt(self, public_key)
+        alphabet_for_encrypt, alphabet_for_decrypt = RSA.letter_numerating()
+
+        encrypt_message = RSA.encrypt(self, public_key, alphabet_for_encrypt)
         secret_key = RSA.get_secret_key(self, euler_num)
         decrypt_message = RSA.decrypt(secret_key, alphabet_for_decrypt, encrypt_message, public_key[1])
 
         RSA.result_print(self, encrypt_message, decrypt_message)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     message = "Иванов Иван Иванович"
     p = 7
     q = 17

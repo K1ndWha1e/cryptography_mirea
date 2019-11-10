@@ -70,6 +70,7 @@ class Backpack:
         return original_text
 
     def result_print(self, public_key, weight_summ, cipher_text, decrypted_message):
+        print(f'Исходное сообщение -> {self.message}')
         print(f"Открытый ключ -> {public_key}")
         print(f'Сумма весов -> {weight_summ}')
         print(f'Шифр текст -> {cipher_text}')
@@ -99,5 +100,4 @@ if __name__ == "__main__":
     number_m = 420
     number_n = 31
 
-    print(f'Исходное сообщение -> {message}')
     Backpack(message=message, secret_key=secret_key, m=number_m, n=number_n).start()
