@@ -86,13 +86,13 @@ if __name__ == "__main__":
 
 ```python
     def start(self):
-        Encoding.tuning_original_text(self) #если из сообщения нельзя состравить матрицу, то эта функцую "добьёт" пробелами до необходимой длины.
+        Encoding.formatting_original_text(self) #если из сообщения нельзя состравить матрицу, то эта функцую "добьёт" пробелами до необходимой длины.
 
 ```
 Обращаем внимание на следующую фукцию:
 
 ```python
-def tuning_original_text(self):
+def formatting_original_text(self):
         remain = self.lenght_original_text % self.lenght_key #делится ли длина сообщения на длину ключа без остатка [20 / 4 = 5 (остаток 0)]
         empty_line = " "
 
@@ -105,7 +105,7 @@ def tuning_original_text(self):
 
 ```python
    def start(self):
-        Encoding.tuning_original_text(self)
+        Encoding.formatting_original_text(self)
 
         array_original, matrix_column_lenght = Encoding.create_original_matrix(self) # здесь мы создаём саму матрицу
 ```
@@ -115,15 +115,17 @@ def tuning_original_text(self):
 
 ```python
     def create_original_matrix(self):
-        matrix_column_lenght = len(self.original_text) / self.lenght_key #подсчёт количкства строчек
+        matrix_column_length = len(self.original_text) / self.key_length #подсчёт количкства строчек
 
-        scrub_original_text = str(list(self.original_text.replace(" ", "_"))) #заменяем пробелы на нижнее подчёркивание, чтоб визуализировать пробелы
-        a = np.array(list(map(str, scrub_original_text.split(',')))) #создаём numpy матрицу, сейчас она записана в одну сторку, для это мы сделаем следующий шаг
+        scrub_original_text = str(list(self.original_text.replace(" ", "_")))
+        array_in_single_line = np.array(list(map(str, scrub_original_text.split(',')))) #заменяем пробелы на нижнее подчёркивание, чтоб визуализировать пробелы
 
-        a.shape = (self.lenght_key, int(matrix_column_lenght)) #преобразование матрицы (4 на 5)
-        array_original = a.transpose() #транспонируем, для того чтоб сообщение было записано по столбцам
+        array_in_single_line.shape = (self.key_length, int(matrix_column_length)) #преобразование матрицы (4 на 5)
+        array_original = array_in_single_line.transpose() #транспонируем, для того чтоб сообщение было записано по столбцам
 
-       return array_original, matrix_column_lenght # возвращаем элементы, которые понадобятся в будущем
+
+        return array_original, matrix_column_length # возвращаем элементы, которые понадобятся в будущем
+
 ```
 
 И снова же верёмся к истокам:
@@ -141,17 +143,16 @@ def tuning_original_text(self):
 
 ```python
     def matrix_encode(self, array, matrix_column_lenght) -> str:
-        elements_of_the_key = [int(i) for i in list(self.key)] #создаём список из элементов ключей
-        encrypted_array = np.array([]) #создаём пустой numpy массив, куда будем складывать столцы в новой последовательности
+        key_elements = [int(i) for i in list(self.key)] #создаём список из элементов ключей
 
-        for i in range(self.lenght_key): #i (integer) по по длине ключа
-            encrypted_array = np.append(encrypted_array, array[:, int(elements_of_the_key[i]) - 1]) # добавляем стобец указанный в начале, i - 1, т.к счёт начинаетс с 0
+        encrypted_array = np.array([])                  #создаём пустой numpy массив, куда будем складывать столцы в новой последовательности
+        for i in range(self.key_length):                #i (integer) по по длине ключа
+            encrypted_array = np.append(encrypted_array, array[:, int(key_elements[i]) - 1])
 
-        encrypted_array.shape = (self.lenght_key, int(matrix_column_lenght)) #делаем матрицу 4 на 5
-
+        encrypted_array.shape = (self.key_length, int(matrix_column_length))
         encrypted_array = str(encrypted_array.transpose())
 
-        return encrypted_array #возвращаем зашифрованное сообщение
+        return encrypted_array  #возвращаем зашифрованное сообщение
 ```
 
 Если вывести полученную матрицу, то будет страшно, а чтобы мы жили спокойно, нужно очистить её от 'мусора':
@@ -162,7 +163,6 @@ def clean_matrix(encrypted_array):
 
     trash = dict((re.escape(k), v) for k, v in trash.items()) #находим жертву
     pattern = re.compile("|".join(trash.keys())) #разжигаем костёр и читаем молитвы
-
     clean_encrypted_line = pattern.sub(lambda m: trash[re.escape(m.group(0))], encrypted_array) #Боги услышали нас, они... они... ах, что же это?
 
     return clean_encrypted_line #(ﾉ>ω<)ﾉ :｡･:*:･ﾟ’★,｡･:*:･ﾟ’☆ туман рассеивается 
@@ -185,7 +185,7 @@ def clean_matrix(encrypted_array):
         print(f'Зашифрованное сообщение -> {string_encrypted}')
 ```
 
-Фух, было сложно, но мы ~~вздо..~~ зашифровали.
+Фух, было сложно, но мы ~~взд..~~ зашифровали.
 
 Теперь, нужно расшифровать (ノ°益°)ノ вернёмся к самому - самому началу...
 
@@ -213,15 +213,15 @@ def start(self):
 
 ```python
     def matrix_decode(self, array):
-    	elements_of_the_key = [int(i) - 1 for i in list(self.key)]
+    	key_elements = [int(i) - 1 for i in list(self.key)]
 
         decrypted_array = np.array([]) #опять
 
 
         for i in range(self.lenght_key):
-            decrypted_array = np.append(decrypted_array, array[:, elements_of_the_key.index(min(elements_of_the_key))]) #ноходится столбец с наименьшим значением
-            elements_of_the_key.insert(elements_of_the_key.index(min(elements_of_the_key)), 9999) #добавляем большое число
-            elements_of_the_key.pop(elements_of_the_key.index(min(elements_of_the_key))) #удаляем столбец с наименьшим значением
+            decrypted_array = np.append(decrypted_array, array[:, key_elements.index(min(key_elements))]) #ноходится столбец с наименьшим значением
+            key_elements.insert(key_elements.index(min(key_elements)), 9999) #добавляем большое число
+            key_elements.pop(key_elements.index(min(key_elements))) #удаляем столбец с наименьшим значением
 
         decrypted_array.shape = (self.lenght_key, int(self.matrix_column_lenght)) 
 
@@ -255,6 +255,3 @@ def start(self):
 	
 	>Всё очень просто, добиваем нехватку пробелами.
 	
-- Сколько писал этот код?
-
-	>Три часа

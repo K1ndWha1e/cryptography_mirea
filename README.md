@@ -1,9 +1,4 @@
 # Программы для выполнения лаборатоных работ по криптографии
-
-![Last Commit](https://img.shields.io/github/last-commit/K1ndWha1e/cryptography_mirea)
-![Commit status](https://img.shields.io/github/commit-status/K1ndWha1e/cryptography_mirea/master/4ef2d4cfbf6430d4b4aaaf7661fc9ecf73d2bb3a)
-![Watchers](https://img.shields.io/github/watchers/K1ndWha1e/cryptography_mirea?style=social)
-
 В этом репозитории представлены программы для решения лабораторных работ по криптографии в РТУ МИРЭА
 
 ## Установка
@@ -15,7 +10,7 @@ $ git clone https://github.com/K1ndWha1e/cryptography_mirea.git
 #открываем папку репозитория
 $ cd cryptography_mirea
 
-#скачать python3 и python3-pip, если ещё не установлены
+#установить python3 и python3-pip, если ещё не установлены
 
 #теперь, скачиваем необходимые пакеты
 $ python3 -m pip install -r requirements.txt
